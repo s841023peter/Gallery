@@ -70,6 +70,7 @@ class PhotoGalleryFragment : Fragment() {
             ) ?: ColorDrawable()
             holder.bindDrawable(placeholder)
 //            thumbnailDownLoader.queueThumbnail(holder, galleryItem.url)
+        }
     }
     companion object {
         fun newInstance() = PhotoGalleryFragment()
