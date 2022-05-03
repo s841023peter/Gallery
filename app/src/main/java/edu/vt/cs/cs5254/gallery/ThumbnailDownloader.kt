@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
 private const val TAG = "ThumbnailDownloader"
 private const val MESSAGE_DOWNLOAD = 0
 
+// Any? -> can be null vs. Any -> cannot be null
 class ThumbnailDownloader<in H : Any>(
     private val responseHandler: Handler,
     private val onThumbnailDownloaded: (H, Bitmap) -> Unit
