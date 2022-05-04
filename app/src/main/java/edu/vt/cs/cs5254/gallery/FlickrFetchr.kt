@@ -2,6 +2,7 @@ package edu.vt.cs.cs5254.gallery
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
@@ -31,16 +32,17 @@ object FlickrFetchr {
 
     }
 
+    val galleryItemsLiveData: MutableLiveData<List<GalleryItem>> = MutableLiveData()
 
-    fun fetchPhotos(): LiveData<List<GalleryItem>> {
-        val responseLiveData: MutableLiveData<List<GalleryItem>> = MutableLiveData()
+
+    fun fetchPhotos(isReload: Boolean) {
+        if (galleryItemsLiveData.value != null && !isReload) return
         val flickrRequest: Call<FlickrResponse> = flickrApi.fetchPhotos()
-        // engueue is an async action for fethcing data from API response
         flickrRequest.enqueue(object : Callback<FlickrResponse> {
             override fun onFailure(call: Call<FlickrResponse>, t: Throwable) {
                 Log.e(TAG, "Failed to fetch photos", t)
             }
-            // handle http status code here (ex. 404/500)
+
             override fun onResponse(
                 call: Call<FlickrResponse>,
                 response: Response<FlickrResponse>
@@ -53,13 +55,15 @@ object FlickrFetchr {
                 galleryItems = galleryItems.filterNot {
                     it.url.isBlank()
                 }
-                responseLiveData.value = galleryItems
+                galleryItemsLiveData.value = galleryItems
             }
         })
-        return responseLiveData
     }
-    // this fun should only be called on a background thread (vs UI thread)
-    // It does *not* create a background thread for you - you have to do it yourself
+
+
+    fun storeThumbnail(id: String, drawable: Drawable) {
+        galleryItemsLiveData.value?.find { it.id == id }?.drawable = drawable
+    }
 
     @WorkerThread
     fun fetchPhoto(url: String): Bitmap? {
