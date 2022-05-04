@@ -30,6 +30,8 @@ object FlickrFetchr {
         flickrApi = retrofit.create(FlickrApi::class.java)
 
     }
+
+
     fun fetchPhotos(): LiveData<List<GalleryItem>> {
         val responseLiveData: MutableLiveData<List<GalleryItem>> = MutableLiveData()
         val flickrRequest: Call<FlickrResponse> = flickrApi.fetchPhotos()
